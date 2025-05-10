@@ -54,16 +54,12 @@ for jenis in df['jenis_kendaraan'].unique():
     intercept = model.intercept_
     prediksi_regresi = model.predict(tahun_prediksi.reshape(-1, 1))
 
-    # Interpolasi Linear
-    interpolasi = np.interp(tahun_prediksi, x_flat, y)
-
     # Interpolasi Newton
     prediksi_newton = newton_interpolation(x_flat, y, tahun_prediksi)
 
     hasil_prediksi[jenis] = {
         'tahun': tahun_prediksi,
         'regresi': prediksi_regresi,
-        'interpolasi': interpolasi,
         'newton': prediksi_newton,
         'slope': slope,
         'intercept': intercept,
@@ -73,7 +69,6 @@ for jenis in df['jenis_kendaraan'].unique():
 
 # 4. Tampilkan hasil prediksi dan perhitungannya per jenis kendaraan
 total_regresi = np.zeros_like(tahun_prediksi, dtype=float)
-total_interpolasi = np.zeros_like(tahun_prediksi, dtype=float)
 total_newton = np.zeros_like(tahun_prediksi, dtype=float)
 
 for jenis, hasil in hasil_prediksi.items():
@@ -90,17 +85,12 @@ for jenis, hasil in hasil_prediksi.items():
     for t, r in zip(hasil['tahun'], hasil['regresi']):
         print(f"    Tahun {t}: y = {hasil['slope']:.2f}*{t} + {hasil['intercept']:.2f} = {int(r)}")
 
-    print("\nPrediksi Interpolasi Linear:")
-    for t, i in zip(hasil['tahun'], hasil['interpolasi']):
-        print(f"    Tahun {t}: {int(i)}")
-
     print("\nPrediksi Interpolasi Newton:")
     for t, n in zip(hasil['tahun'], hasil['newton']):
         print(f"    Tahun {t}: {int(n)}")
 
     # Akumulasi total
     total_regresi += hasil['regresi']
-    total_interpolasi += hasil['interpolasi']
     total_newton += hasil['newton']
 
 # 5. Prediksi total semua kendaraan
@@ -111,9 +101,6 @@ print("==============================")
 print("\nRegresi Linier:")
 for t, r in zip(tahun_prediksi, total_regresi):
     print(f"  Tahun {t}: {int(r)}")
-print("\nInterpolasi Linear:")
-for t, i in zip(tahun_prediksi, total_interpolasi):
-    print(f"  Tahun {t}: {int(i)}")
 print("\nInterpolasi Newton:")
 for t, n in zip(tahun_prediksi, total_newton):
     print(f"  Tahun {t}: {int(n)}")
